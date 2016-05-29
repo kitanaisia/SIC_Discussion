@@ -41,18 +41,13 @@ def rush_in_hand(rush_total, i)
 
   # i枚のRUSHがくる確率を計算
   # 分母
-  denominator = deck_total.permutation(max_hands)
-  puts "C(%d,%d) = %d" % [deck_total, max_hands, denominator]
+  denominator = deck_total.combination(max_hands)
 
   # 分子
-  numerator = rush_total.permutation(i) * (deck_total - rush_total).permutation(max_hands - i)
-  puts "C(%d,%d) / C(%d,%d) = %d" % [rush_total, i, (deck_total - rush_total), (max_hands - i), numerator]
-
+  numerator = rush_total.combination(i) * (deck_total - rush_total).combination(max_hands - i)
   probability = numerator.to_f / denominator.to_f
+  probability
 
-  print "手札にRUSHが%d枚の確率: "% i
-  puts "%.2f%%" % (probability.to_f * 100)
-  puts 
 end
 
 # ========================================
@@ -60,8 +55,21 @@ end
 for rush_total in 5..9 do
   puts "================================"
   puts "RUSH総計%d枚の場合" % rush_total
-  for i in 0..4 do
-    rush_in_hand(rush_total, i)
-  end
+  # for i in 0..4 do
+  #   rush_in_hand(rush_total, i)
+  # end
+
+  # RUSHが無くて事故っている場合
+  rush_non = rush_in_hand(rush_total, 0)
+  # RUSHが1,2枚と程よくある場合
+  rush_one = rush_in_hand(rush_total, 1)
+  rush_two = rush_in_hand(rush_total, 2)
+  # RUSHが3,4枚と
+  rush_many= rush_in_hand(rush_total, 3) + rush_in_hand(rush_total, 4)
+
+  puts "RUSHがない確率   :%.2f%%" % [ rush_non * 100 ]
+  puts "RUSHが1枚の確率  :%.2f%%" % [ rush_one* 100 ]
+  puts "RUSHが2枚の確率  :%.2f%%" % [ rush_two* 100 ]
+  puts "RUSHが3,4枚の確率:%.2f%%" % [ rush_many * 100 ]
   puts "================================"
 end
