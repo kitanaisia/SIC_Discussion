@@ -50,26 +50,59 @@ def rush_in_hand(rush_total, i)
 
 end
 
+# 
+# RUSHが手札にi枚ある確率を計算する。
+#
+# rush_total : デッキ中のRUSHの枚数
+# rush_total : 手札に引くRUSHの枚数
+#
+def rush_from_top(rush_total, rush_in_deck)
+  # constant
+  deck_total = 19
+  return rush_in_deck.to_f / deck_total.to_f
+end
+
+
 # ========================================
 
-for rush_total in 5..9 do
+for rush_total in 1..9 do
   puts "================================"
   puts "RUSH総計%d枚の場合" % rush_total
-  # for i in 0..4 do
-  #   rush_in_hand(rush_total, i)
-  # end
 
-  # RUSHが無くて事故っている場合
-  rush_non = rush_in_hand(rush_total, 0)
-  # RUSHが1,2枚と程よくある場合
-  rush_one = rush_in_hand(rush_total, 1)
-  rush_two = rush_in_hand(rush_total, 2)
-  # RUSHが3,4枚と
-  rush_many= rush_in_hand(rush_total, 3) + rush_in_hand(rush_total, 4)
+  # RUSHが手札にi枚ある確率
+  rush_hand = Array.new(5,0)
+  for i in 0..4 do
+    if rush_total < i
+      next
+    end
+    rush_hand[i] = rush_in_hand(rush_total, i)
+  end
 
-  puts "RUSHがない確率   :%.2f%%" % [ rush_non * 100 ]
-  puts "RUSHが1枚の確率  :%.2f%%" % [ rush_one* 100 ]
-  puts "RUSHが2枚の確率  :%.2f%%" % [ rush_two* 100 ]
-  puts "RUSHが3,4枚の確率:%.2f%%" % [ rush_many * 100 ]
+  # RUSHが手札にi枚ある時にトップからRUSHを捲れる確率
+  rush_top = Array.new(5,0)
+  for i in 0..4 do
+    if rush_total < i
+      next
+    end
+    rush_top[i] = rush_from_top(rush_total, rush_total - i)
+  end
+
+  for i in 0..4 do
+    puts "RUSHが%d枚の確率  :%.2f%%" % [i, rush_hand[i]* 100 ]
+    # puts "RUSHが%d枚の時にTOPからRUSHを捲れる確率 :%.2f%%" % [i, rush_top[i] * 100 ]
+  end
+
+  for i in 0..1 do
+    puts "RUSHが%d枚かつTOPからRUSHを捲れる確率 :%.2f%%" % [i, rush_hand[i] * rush_top[i] * 100]
+  end
+
+  #
+  # 自らがよしとするパターンを以下3つとする
+  # 1. RUSHが0枚かつTOPからRUSHを捲れる確率
+  # 2. RUSHが1枚かつTOPからRUSHを捲れる確率
+
+  ideal = ( (rush_hand[0] * rush_top[0]) + (rush_hand[1] * rush_top[1]) ) * 100
+  puts "理想:%.2f%%" % ideal
+
   puts "================================"
 end
